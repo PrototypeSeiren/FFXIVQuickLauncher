@@ -85,7 +85,7 @@ namespace XIVLauncher.Dalamud
             if (!CheckVcRedist())
                 return;
 
-            var addonDirectory = Path.Combine(Paths.RoamingPath, "addon", "Hooks");
+            var addonDirectory = Path.Combine(Environment.CurrentDirectory, "Dalamud");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
             var ingamePluginPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
@@ -128,8 +128,8 @@ namespace XIVLauncher.Dalamud
                 }
             }
 
-            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                return;
+            //if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+            //    return;
 
             if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
                 !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")) ||
@@ -143,7 +143,7 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
-            var assetPath = Path.Combine(Util.GetRoaming(), "dalamudAssets");
+            var assetPath = Path.Combine(Paths.RoamingPath, "DalamudAssets");
 
             try
             {
@@ -198,6 +198,7 @@ namespace XIVLauncher.Dalamud
 
         public static bool CanRunDalamud(DirectoryInfo gamePath)
         {
+            return true;
             using var client = new WebClient();
 
             var versionInfoJson = client.DownloadString(REMOTE_BASE + "version");

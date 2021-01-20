@@ -47,7 +47,7 @@ namespace XIVLauncher
             if (string.IsNullOrEmpty(path))
                 return false;
 
-            return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
+            return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "sdo"));
         }
 
         private static string DefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");

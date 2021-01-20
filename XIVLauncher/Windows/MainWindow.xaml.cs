@@ -80,6 +80,7 @@ namespace XIVLauncher.Windows
 
         private void SetupHeadlines()
         {
+            /*
             try
             {
                 _bannerChangeTimer?.Stop();
@@ -132,6 +133,7 @@ namespace XIVLauncher.Windows
                     NewsListView.ItemsSource = new List<News> {new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"}};
                 }));
             }
+            */
         }
 
         public void Initialize()
@@ -246,9 +248,11 @@ namespace XIVLauncher.Windows
 
         private void HandleBootCheck(Action whenFinishAction)
         {
+            whenFinishAction?.Invoke();
+            return;
             try
             {
-                App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
+                App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "patches"));
 
                 Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
                 try
@@ -333,6 +337,7 @@ namespace XIVLauncher.Windows
 
         private void HandleLogin(bool autoLogin, bool startGame = true)
         {
+            /*
             if (string.IsNullOrEmpty(LoginUsername.Text))
             {
                 MessageBox.Show(
@@ -351,6 +356,7 @@ namespace XIVLauncher.Windows
 
             if (_isLoggingIn)
                 return;
+            */
 
             if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION && App.Settings.UniqueIdCacheEnabled)
             {
@@ -362,6 +368,7 @@ namespace XIVLauncher.Windows
             }
 
             _isLoggingIn = true;
+            /*
 
             var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
 
@@ -413,8 +420,9 @@ namespace XIVLauncher.Windows
 
                 otp = otpDialog.Result;
             }
+            */
 
-            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp, startGame)));
+            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(null, startGame)));
         }
 
         private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
@@ -481,18 +489,19 @@ namespace XIVLauncher.Windows
         {
             Log.Information("StartLogin() called");
 
-            var gateStatus = false;
-            try
-            {
-                gateStatus = await Task.Run(() => _launcher.GetGateStatus());
-            }
-            catch
-            {
-                // ignored
-            }
+            var gateStatus = true;
+            //try
+            //{
+            //    gateStatus = await Task.Run(() => _launcher.GetGateStatus());
+            //}
+            //catch
+            //{
+            //    // ignored
+            //}
 
             try
             {
+                /*
                 var loginResult = _launcher.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
 
                 if (loginResult == null)
@@ -536,10 +545,12 @@ namespace XIVLauncher.Windows
 
                     return;
                 }
+                */
 
                 if (startGame)
                 {
-                    await StartGameAndAddon(loginResult, gateStatus);
+                    await StartGameAndAddon(null, gateStatus);
+
                 }
                 else
                 {
@@ -579,6 +590,7 @@ namespace XIVLauncher.Windows
 
         private async Task StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus)
         {
+            /*
             if (!gateStatus)
             {
                 Log.Information("GateStatus is false.");
@@ -600,7 +612,20 @@ namespace XIVLauncher.Windows
             var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
                     SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false));
-
+            */
+            var LauncherPath = Path.Combine(App.Settings.GamePath.ToString(),"sdo", "sdologin", "Launcher.exe");
+            Process.Start(LauncherPath);
+            Process gameProcess = null;
+            while (gameProcess == null) {
+                var FFXIVList = Process.GetProcessesByName("ffxiv_dx11");
+                Log.Information("Looking for GameProcess...");
+                if (FFXIVList.Length > 0) {
+                    gameProcess = FFXIVList[0];
+                }
+                else {
+                    Thread.Sleep(3000);
+                }
+            }
             if (gameProcess == null)
             {
                 Log.Information("GameProcess was null...");
@@ -610,7 +635,7 @@ namespace XIVLauncher.Windows
 
             CleanUp();
 
-            this.Hide();
+            //this.Hide();
 
             var addonMgr = new AddonManager();
 

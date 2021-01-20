@@ -194,7 +194,7 @@ namespace XIVLauncher
             });
         }
 
-        private static string GetConfigPath(string prefix) => Path.Combine(Paths.RoamingPath, $"{prefix}ConfigV3.json");
+        private static string GetConfigPath(string prefix) => Path.Combine(Environment.CurrentDirectory,"AppData", $"{prefix}ConfigV3.json");
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {

@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     Title="XIVLauncher"
     Width="845"
-    Height="376"
+    Height="439.333"
     ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -22,8 +22,8 @@
     Closed="MainWindow_OnClosed">
 
     <Window.Resources>
-        <system:Double x:Key="BannerCardWidth">544</system:Double>
-        <system:Double x:Key="BannerCardHeight">213</system:Double>
+        <system:Double x:Key="BannerCardWidth">547</system:Double>
+        <system:Double x:Key="BannerCardHeight">293</system:Double>
     </Window.Resources>
 
     <Grid>
@@ -61,12 +61,7 @@
                                 HorizontalAlignment="Left"
                                 Width="{DynamicResource BannerCardWidth}" Height="{DynamicResource BannerCardHeight}"
                                 Cursor="Hand"
-                                MouseUp="BannerCard_MouseUp">
-                                <Viewbox>
-                                    <Image x:Name="BannerImage"
-                                           Source="pack://application:,,,/Resources/placeholder-news.png" />
-                                </Viewbox>
-                            </materialDesign:Card>
+                                MouseUp="BannerCard_MouseUp"/>
 
                             <materialDesign:Card
                                 Grid.Row="1"

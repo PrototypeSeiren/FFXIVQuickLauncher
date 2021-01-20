@@ -367,7 +367,7 @@
     "message": "Puoi utilizzare il comando \"/xlplugins\" all'interno del gioco per installare altri plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "SettingsPatching": {
+  "SettingsPatching": {patch 
     "message": "Patching",
     "description": "SettingsControlViewModel.SetupLoc"
   },
