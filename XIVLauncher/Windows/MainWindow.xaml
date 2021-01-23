@@ -183,7 +183,7 @@
                                         Height="24"
                                         TextWrapping="Wrap"
                                         VerticalAlignment="Top"
-                                        materialDesign:HintAssist.Hint="{Binding LoginUsernameLoc}" />
+                                        materialDesign:HintAssist.Hint="{Binding LoginUsernameLoc}" d:IsHidden="True" Visibility="Hidden"/>
                                     <PasswordBox
                                         DockPanel.Dock="Top"
                                         x:Name="LoginPassword"
@@ -191,7 +191,7 @@
                                         Height="24"
                                         Margin="0,4,0,0"
                                         VerticalAlignment="Top"
-                                        materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" />
+                                        materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" d:IsHidden="True" Visibility="Hidden" />
 
                                     <CheckBox
                                         DockPanel.Dock="Top"
@@ -199,14 +199,14 @@
                                         HorizontalAlignment="Left"
                                         Margin="0,14,0,0"
                                         VerticalAlignment="Top"
-                                        x:Name="AutoLoginCheckBox" />
+                                        x:Name="AutoLoginCheckBox" d:IsHidden="True" Visibility="Hidden"/>
                                     <CheckBox
                                         DockPanel.Dock="Top"
                                         Content="{Binding OtpLoc}"
                                         HorizontalAlignment="Left"
                                         Margin="0,4,0,0"
                                         VerticalAlignment="Top"
-                                        x:Name="OtpCheckBox" />
+                                        x:Name="OtpCheckBox" d:IsHidden="True" Visibility="Hidden"/>
                                     <CheckBox
                                         DockPanel.Dock="Top"
                                         Content="{Binding SteamLoc}"
@@ -234,10 +234,10 @@
                                         <Button HorizontalAlignment="Left"
                                                 x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB"
                                                 BorderBrush="#FF0096DB" ToolTip="{Binding OpenAccountSwitcherLoc}"
-                                                Click="NoFunc_OnClick">
+                                                Click="InjectButton_Click">
                                             <StackPanel Orientation="Horizontal" Margin="0">
                                                 <materialDesign:PackIcon
-                                                                         Kind="AccountGroup" />
+                                                                         Kind="Injection" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>

@@ -20,6 +20,7 @@ namespace XIVLauncher
 
         public async Task Run(bool downloadPrerelease = false)
         {
+            return;
 
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

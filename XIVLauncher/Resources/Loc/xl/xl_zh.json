@@ -196,7 +196,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
-    "message": "Open Account Switcher",
+    "message": "直接注入到现有FFXIV进程",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Settings": {

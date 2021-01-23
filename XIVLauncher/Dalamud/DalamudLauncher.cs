@@ -161,7 +161,7 @@ namespace XIVLauncher.Dalamud
             var process = new Process {
                 StartInfo =
                 {
-                    FileName = addonExe, WindowStyle = ProcessWindowStyle.Normal, CreateNoWindow = false,
+                    FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
                     Arguments = gameProcess.Id.ToString() + " " + parameters,WorkingDirectory = addonDirectory
                 }
             };

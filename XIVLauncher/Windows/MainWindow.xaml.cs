@@ -495,9 +495,8 @@ namespace XIVLauncher.Windows
                 if (startGame) {
                     var LauncherPath = SteamCheckBox.IsChecked == true ? "wegame://StartFor=2000340" : Path.Combine(App.Settings.GamePath.ToString(), "sdo", "sdologin", "Launcher.exe");
                     Process.Start(LauncherPath);
-                    if (_maintenanceQueueTimer == null)
+                    if (_ffixvLauncherTimer == null)
                         SetupWaitingFFXIVTimer();
-
                     DialogHost.OpenDialogCommand.Execute(null, WaitingFFXIVDialogHost);
                     _ffixvLauncherTimer.Start();
 
@@ -540,6 +539,22 @@ namespace XIVLauncher.Windows
 
                 new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
             }
+        }
+
+        private void InjectButton_Click(object sender, RoutedEventArgs e) {
+            HandleInject();
+        }
+
+        private void HandleInject() {
+            if (_ffixvLauncherTimer == null)
+                SetupWaitingFFXIVTimer();
+            DialogHost.OpenDialogCommand.Execute(null, WaitingFFXIVDialogHost);
+            _ffixvLauncherTimer.Start();
+
+            // Manually fire the first event, avoid waiting the first timer interval
+            Task.Run(() => {
+                OnWaitingFFXIVEvent(null, null);
+            });
         }
 
         private void SetupWaitingFFXIVTimer() {
@@ -704,7 +719,7 @@ namespace XIVLauncher.Windows
 
                 CleanUp();
 
-                //Environment.Exit(0);
+                Environment.Exit(0);
             });
             watchThread.Start();
 

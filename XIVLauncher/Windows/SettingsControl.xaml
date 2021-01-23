@@ -251,7 +251,8 @@
                             </Button>
                             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
-                                    x:Name="BackupToolButton" Click="BackupToolButton_OnClick" d:IsHidden="True">
+                                    Visibility="Hidden"
+                                    x:Name="BackupToolButton" Click="BackupToolButton_OnClick">
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="Wrench" />
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartBackupToolLoc}"/>
@@ -259,13 +260,15 @@
                             </Button>
                             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
-                                    x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick" d:IsHidden="True">
+                                    Visibility="Hidden"
+                                    x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="Launch" />
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartOriginalLauncherLoc}"/>
                                 </StackPanel>
                             </Button>
-                            <StackPanel Orientation="Horizontal" d:IsHidden="True">
+                            <StackPanel Orientation="Horizontal" Visibility="Hidden">
+                                
                                 <CheckBox x:Name="UidCacheCheckBox"
                                           Content="{Binding EnabledUidCacheLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
@@ -277,8 +280,8 @@
                                                    Foreground="DarkGray" FontSize="11" d:IsHidden="True"><Run Text="Reset"/></TextBlock>
                                     </StackPanel>
                                 </Button>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" d:IsHidden="True">
+                            </StackPanel >
+                            <StackPanel Orientation="Horizontal" Visibility="Hidden">
                                 <CheckBox x:Name="EncryptedArgumentsCheckbox"
                                           Content="{Binding EnableEncryptionLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
