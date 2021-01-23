@@ -448,16 +448,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Resources\Loc\xl\xl_de.json" />
-    <EmbeddedResource Include="Resources\Loc\xl\xl_es.json" />
-    <EmbeddedResource Include="Resources\Loc\xl\xl_fr.json" />
-    <EmbeddedResource Include="Resources\Loc\xl\xl_it.json" />
-    <EmbeddedResource Include="Resources\Loc\xl\xl_ja.json" />
-    <EmbeddedResource Include="Resources\Loc\xl\xl_pt.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_zh.json" />
     <Resource Include="Resources\logo.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

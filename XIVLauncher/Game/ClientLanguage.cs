@@ -5,7 +5,8 @@
         Japanese,
         English,
         German,
-        French
+        French,
+        ChineseSimplified
     }
 
     public static class ClientLanguageExtensions
@@ -26,8 +27,11 @@
                 case ClientLanguage.French:
                     return "fr";
 
+                case ClientLanguage.ChineseSimplified:
+                    return "zh";
+
                 default:
-                    return "en-gb";
+                    return "zh";
             }
         }
     }

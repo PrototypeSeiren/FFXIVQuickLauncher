@@ -30,11 +30,6 @@
                                             Margin="10,0,0,60" Width="400" VerticalAlignment="Center"
                                             HorizontalAlignment="Left"
                                             Foreground="{DynamicResource MaterialDesignBody}" />
-                    <TextBlock Margin="10,110,0,0"
-                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeSteamNoticeLoc}"/>
-                    <CheckBox x:Name="SteamCheckBox" Content="{Binding FirstTimeSteamCheckBoxLoc}"
-                              HorizontalAlignment="Left" Margin="10,75,0,0"
-                              Foreground="{DynamicResource MaterialDesignBody}" />
                     <Button Content="{Binding NextLoc}" Width="79" VerticalAlignment="Bottom"
                             HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click" />
                 </Grid>
@@ -69,8 +64,9 @@
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeLanguageLoc}"/>
 
-                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0"
+                        <ComboBox SelectedIndex="0" Margin="0, 5, 0, 0"
                                   x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
+                            <ComboBoxItem>简体中文</ComboBoxItem>
                             <ComboBoxItem>日本語</ComboBoxItem>
                             <ComboBoxItem>English</ComboBoxItem>
                             <ComboBoxItem>Deutsch</ComboBoxItem>

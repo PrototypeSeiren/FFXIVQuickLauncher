@@ -8,20 +8,17 @@ namespace XIVLauncher.Game.Patch.PatchList
 {
     class PatchListParser
     {
-        public static PatchListEntry[] Parse(string list)
-        {
+        public static PatchListEntry[] Parse(string list) {
             var lines = list.Split(
                 new[] { "\r\n", "\r", "\n", Environment.NewLine },
                 StringSplitOptions.None
             );
-            
+
             var output = new List<PatchListEntry>();
 
-            for (var i = 5; i < lines.Length - 2; i++)
-            {
+            for (var i = 5; i < lines.Length - 2; i++) {
                 var fields = lines[i].Split('\t');
-                output.Add(new PatchListEntry()
-                {
+                output.Add(new PatchListEntry() {
                     Length = long.Parse(fields[0]),
                     VersionId = fields[4],
                     HashType = fields[5],
@@ -33,7 +30,7 @@ namespace XIVLauncher.Game.Patch.PatchList
                     Url = fields[fields.Length == 9 ? 8 : 5]
                 });
             }
-            
+
             return output.ToArray();
         }
     }

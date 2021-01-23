@@ -19,7 +19,8 @@ namespace XIVLauncher.PatchInstaller
 
     public static class RepoExtensions
     {
-        public static string BASE_GAME_VERSION = "2012.01.01.0000.0000";
+        private const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
+
         private static DirectoryInfo GetRepoPath(this Repository repo, DirectoryInfo gamePath)
         {
             switch (repo)
@@ -64,7 +65,7 @@ namespace XIVLauncher.PatchInstaller
             var verFile = repo.GetVerFile(gamePath, isBck);
 
             if (!verFile.Exists) 
-                return PatcherMain.BASE_GAME_VERSION;
+                return BASE_GAME_VERSION;
 
             return File.ReadAllText(verFile.FullName);
         }

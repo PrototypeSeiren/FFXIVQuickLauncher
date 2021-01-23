@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CheapLoc;
+using Timer = System.Timers.Timer;
 
 namespace XIVLauncher.Windows.ViewModel
 {
     class MainWindowViewModel
     {
+
         public MainWindowViewModel()
         {
             SetupLoc();
@@ -25,13 +30,13 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoStartLoc = Loc.Localize("LoginBoxNoStartLogin", "Update without starting");
             LoginTooltipLoc = Loc.Localize("LoginBoxLoginTooltip", "Log in with the provided credentials");
             WaitingForMaintenanceLoc = Loc.Localize("LoginBoxWaitingForMaint", "Waiting for maintenance to be over...");
+            WaitingFFXIVLoc ="Wating for lanuching of FFXIV";
             CancelLoc = Loc.Localize("Cancel", "Cancel");
             OpenAccountSwitcherLoc = Loc.Localize("OpenAccountSwitcher", "Open Account Switcher");
             SettingsLoc = Loc.Localize("Settings", "Settings");
             WorldStatusLoc = Loc.Localize("WorldStatus", "World Status");
             MaintenanceQueue = Loc.Localize("MaintenanceQueue", "Wait for maintenance to be over");
         }
-
         public string LoginUsernameLoc { get; private set; }
         public string LoginPasswordLoc { get; private set; }
         public string AutoLoginLoc { get; private set; }
@@ -40,6 +45,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string LoginLoc { get; private set; }
         public string LoginNoStartLoc { get; private set; }
         public string WaitingForMaintenanceLoc { get; private set; }
+        public string WaitingFFXIVLoc { get; private set; }
         public string CancelLoc { get; private set; }
         public string LoginTooltipLoc { get; private set; }
         public string OpenAccountSwitcherLoc { get; private set; }

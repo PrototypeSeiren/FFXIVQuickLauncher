@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     Title="XIVLauncher"
     Width="845"
-    Height="439.333"
+    Height="376"
     ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -22,8 +22,8 @@
     Closed="MainWindow_OnClosed">
 
     <Window.Resources>
-        <system:Double x:Key="BannerCardWidth">547</system:Double>
-        <system:Double x:Key="BannerCardHeight">293</system:Double>
+        <system:Double x:Key="BannerCardWidth">544</system:Double>
+        <system:Double x:Key="BannerCardHeight">213</system:Double>
     </Window.Resources>
 
     <Grid>
@@ -61,7 +61,12 @@
                                 HorizontalAlignment="Left"
                                 Width="{DynamicResource BannerCardWidth}" Height="{DynamicResource BannerCardHeight}"
                                 Cursor="Hand"
-                                MouseUp="BannerCard_MouseUp"/>
+                                MouseUp="BannerCard_MouseUp">
+                                <Viewbox>
+                                    <Image x:Name="BannerImage"
+                                           Source="pack://application:,,,/Resources/placeholder-news.png" />
+                                </Viewbox>
+                            </materialDesign:Card>
 
                             <materialDesign:Card
                                 Grid.Row="1"
@@ -124,7 +129,7 @@
                                     Focusable="False"
                                     ToolTip="{Binding MaintenanceQueue}"
                                     Margin="0" Height="77" Width="77"
-                                    Click="QueueButton_OnClick">
+                                    Click="NoFunc_OnClick">
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <materialDesign:PackIcon Kind="Update"
@@ -229,7 +234,7 @@
                                         <Button HorizontalAlignment="Left"
                                                 x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB"
                                                 BorderBrush="#FF0096DB" ToolTip="{Binding OpenAccountSwitcherLoc}"
-                                                Click="AccountSwitcherButton_OnClick">
+                                                Click="NoFunc_OnClick">
                                             <StackPanel Orientation="Horizontal" Margin="0">
                                                 <materialDesign:PackIcon
                                                                          Kind="AccountGroup" />
@@ -239,7 +244,33 @@
                                 </DockPanel>
                             </materialDesign:Card>
                         </Grid>
+                        
+                        <materialDesign:DialogHost
+                            Identifier="WaitingFFXIVDialogHost"
+                            x:Name="WaitingFFXIVDialogHost" Margin="0,0,0,64">
+                            <materialDesign:DialogHost.DialogContent>
+                                <StackPanel Margin="16">
+                                    <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock x:Name="WaitingFFXIVTextBlock"
+                                                   Text="{Binding WaitingFFXIVLoc}" />
 
+                                        <ProgressBar
+                                           
+                                            Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                            Value="0"
+                                            IsIndeterminate="True" Height="30" Width="30" Margin="0 8 0 0" />
+                                        <Button
+                                            x:Name="WaitingFFXIVButtonCancelButton"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            IsCancel="True"
+                                            Margin="0 8 0 0"
+                                            Click="QuitWaingFFXIVOnClick" Content="{Binding CancelLoc}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </materialDesign:DialogHost.DialogContent>
+                        </materialDesign:DialogHost>
+                        
                         <materialDesign:DialogHost
                             Identifier="MaintenanceQueueDialogHost"
                             x:Name="MaintenanceQueueDialogHost">

@@ -26,9 +26,11 @@ namespace XIVLauncher.Windows
             if (detectedPath != null) GamePathEntry.Text = detectedPath;
 
 #if XL_NOAUTOUPDATE
+            /*
             MessageBox.Show(
                 $"You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from {App.RepoUrl}/releases.",
                 "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            */
 #endif
         }
 
@@ -45,7 +47,7 @@ namespace XIVLauncher.Windows
                     var regKey = parentKey.OpenSubKey(name);
 
                     var value = regKey.GetValue("DisplayName");
-                    if (value != null && value.ToString() == "Advanced Combat Tracker (remove only)")
+                    if (value != null && value.ToString() == "ACT国服整合")
                         return Path.GetDirectoryName(regKey.GetValue("UninstallString").ToString()
                             .Replace("\"", string.Empty));
                 }
@@ -95,7 +97,7 @@ namespace XIVLauncher.Windows
                 App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
                 App.Settings.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
                 App.Settings.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
-                App.Settings.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
+                //App.Settings.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
                 App.Settings.AddonList = new List<AddonEntry>();
 

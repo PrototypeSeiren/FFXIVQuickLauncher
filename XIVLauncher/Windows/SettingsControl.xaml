@@ -33,12 +33,6 @@
                                             Description="Select a folder" Width="500" VerticalAlignment="Center"
                                             HorizontalAlignment="Left"
                                             Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
-                    <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
-                              x:Name="SteamIntegrationCheckBox" Margin="0,15,0,0" Content="{Binding SteamCheckBoxLoc}" />
-                    <Label Margin="0,10,0,0" Content="{Binding AdditionalArgumentsLoc}" />
-                    <TextBox Width="500" VerticalAlignment="Center"
-                             HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
-                             Margin="0,5,0,0" x:Name="LaunchArgsTextBox" />
                     <Button HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick"
                             IsEnabled="{Binding IsRunIntegrityCheckPossible}"
                             ToolTip="{Binding RunIntegrityCheckTooltipLoc}" Margin="10,20,0,0"
@@ -63,31 +57,35 @@
                     <TextBlock x:Name="Dx9DisclaimerTextBlock" Visibility="Hidden"
                                HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed"
                                Margin="0,0,0,0" Text="{Binding DirectX9NoticeLoc}" />
+                    
+
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLanguageLoc}" />
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLanguageLoc}" d:IsHidden="True" />
                     <ComboBox SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LanguageComboBox"
-                              Foreground="{DynamicResource MaterialDesignBody}">
-                        <ComboBoxItem>日本語</ComboBoxItem>
+                              Foreground="{DynamicResource MaterialDesignBody}" d:IsHidden="True">
+                        <ComboBoxItem>简体中文</ComboBoxItem>
+                        <!--<ComboBoxItem>日本語</ComboBoxItem>
                         <ComboBoxItem>English</ComboBoxItem>
                         <ComboBoxItem>Deutsch</ComboBoxItem>
-                        <ComboBoxItem>Français</ComboBoxItem>
+                        <ComboBoxItem>Français</ComboBoxItem>-->
                     </ComboBox>
 
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 20, 0, 0"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLauncherLanguageLoc}" />
                     <ComboBox SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LauncherLanguageComboBox"
                               Foreground="{DynamicResource MaterialDesignBody}" SelectionChanged="LauncherLanguageCombo_SelectionChanged">
-                        <ComboBoxItem>日本語</ComboBoxItem>
+                        <ComboBoxItem>简体中文</ComboBoxItem>
+                        <!--<ComboBoxItem>日本語</ComboBoxItem>
                         <ComboBoxItem>English</ComboBoxItem>
                         <ComboBoxItem>Deutsch</ComboBoxItem>
                         <ComboBoxItem>Français</ComboBoxItem>
                         <ComboBoxItem>Italiano</ComboBoxItem>
                         <ComboBoxItem>Español</ComboBoxItem>
-                        <ComboBoxItem>Português</ComboBoxItem>
+                        <ComboBoxItem>Português</ComboBoxItem>-->
                     </ComboBox>
                     <TextBlock x:Name="LauncherLanguageNoticeTextBlock" Visibility="Hidden"
                                HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed"
-                               Margin="0,0,0,0" Text="{Binding LauncherLanguageNoticeLoc}" />
+                               Margin="0,0,0,0" Text="{Binding LauncherLanguageNoticeLoc}" d:IsHidden="false" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="{Binding SettingsAutoLaunchLoc}">
@@ -253,7 +251,7 @@
                             </Button>
                             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
-                                    x:Name="BackupToolButton" Click="BackupToolButton_OnClick">
+                                    x:Name="BackupToolButton" Click="BackupToolButton_OnClick" d:IsHidden="True">
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="Wrench" />
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartBackupToolLoc}"/>
@@ -261,28 +259,26 @@
                             </Button>
                             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
-                                    x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
+                                    x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick" d:IsHidden="True">
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="Launch" />
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartOriginalLauncherLoc}"/>
                                 </StackPanel>
                             </Button>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" d:IsHidden="True">
                                 <CheckBox x:Name="UidCacheCheckBox"
                                           Content="{Binding EnabledUidCacheLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
                                 <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                         HorizontalAlignment="Left"
                                         Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" d:IsHidden="True">
                                         <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
-                                                   Foreground="DarkGray" FontSize="11">
-                                            Reset
-                                        </TextBlock>
+                                                   Foreground="DarkGray" FontSize="11" d:IsHidden="True"><Run Text="Reset"/></TextBlock>
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" d:IsHidden="True">
                                 <CheckBox x:Name="EncryptedArgumentsCheckbox"
                                           Content="{Binding EnableEncryptionLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />

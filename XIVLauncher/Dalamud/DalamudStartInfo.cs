@@ -11,11 +11,11 @@ namespace Dalamud
 
         public string PluginDirectory;
         public string DefaultPluginDirectory;
-        public string AssetDirectory;
+        //public string AssetDirectory;
         public ClientLanguage Language;
 
         public string GameVersion;
 
-        public bool OptOutMbCollection;
+        //public bool OptOutMbCollection;
     }
 }

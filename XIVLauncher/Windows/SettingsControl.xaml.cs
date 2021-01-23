@@ -55,8 +55,8 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
-            LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
-            LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
+            LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.ChineseSimplified);
+            LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.ChineseSimplified);
             LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
             AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
@@ -70,14 +70,14 @@ namespace XIVLauncher.Windows
 
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
 
-            SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
+            //SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
 
             // Get old setting if there is one
             if (App.Settings.OptOutMbCollection == null)
-                App.Settings.OptOutMbCollection = DalamudSettings.GetSettings().OptOutMbCollection.GetValueOrDefault(false);
+                App.Settings.OptOutMbCollection = false;
             MbUploadOptOutCheckBox.IsChecked = App.Settings.OptOutMbCollection;
 
-            LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
+            //LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
@@ -111,11 +111,11 @@ namespace XIVLauncher.Windows
             if (InjectionDelayUpDown.Value.HasValue)
                 App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
 
-            App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
+            //App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
             App.Settings.OptOutMbCollection = MbUploadOptOutCheckBox.IsChecked == true;
 
-            App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
+            //App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
             SettingsDismissed?.Invoke(this, null);
 
@@ -266,7 +266,7 @@ namespace XIVLauncher.Windows
         {
             if (LauncherLanguageNoticeTextBlock != null)
             {
-                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Visible;
+                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
             }
         }
 

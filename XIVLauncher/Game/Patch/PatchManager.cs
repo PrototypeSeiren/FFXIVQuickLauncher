@@ -38,16 +38,14 @@ namespace XIVLauncher.Game.Patch
 
     public class PatchManager
     {
-        private DownloadConfiguration _downloadOpt = new DownloadConfiguration
-        {
+        private DownloadConfiguration _downloadOpt = new DownloadConfiguration {
             ParallelDownload = true, // download parts of file as parallel or not
             BufferBlockSize = 8000, // usually, hosts support max to 8000 bytes
             ChunkCount = 8, // file parts to download
             MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
             OnTheFlyDownload = false, // caching in-memory mode
             Timeout = 1000, // timeout (millisecond) per stream block reader
-            RequestConfiguration = new RequestConfiguration
-            {
+            RequestConfiguration = new RequestConfiguration {
                 UserAgent = "FFXIV PATCH CLIENT",
                 Accept = "*/*"
             },
@@ -78,8 +76,7 @@ namespace XIVLauncher.Game.Patch
 
         public long AllDownloadsLength => Downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();
 
-        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer)
-        {
+        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer) {
             _repository = repository;
             _gamePath = gamePath;
             _patchStore = patchStore;
@@ -88,19 +85,17 @@ namespace XIVLauncher.Game.Patch
             if (!_patchStore.Exists)
                 _patchStore.Create();
 
-            Downloads = patches.Select(patchListEntry => new PatchDownload {Patch = patchListEntry, State = PatchState.Nothing}).ToList().AsReadOnly();
+            Downloads = patches.Select(patchListEntry => new PatchDownload { Patch = patchListEntry, State = PatchState.Nothing }).ToList().AsReadOnly();
 
             // All dl slots are available at the start
-            for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
-            {
+            for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++) {
                 Slots[i] = true;
             }
 
             ServicePointManager.DefaultConnectionLimit = 255;
         }
 
-        public void Start()
-        {
+        public void Start() {
 #if !DEBUG
             var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
 
@@ -130,16 +125,14 @@ namespace XIVLauncher.Game.Patch
             Task.Run(RunApplyQueue, _cancelTokenSource.Token);
         }
 
-        private async Task DownloadPatchAsync(PatchDownload download, int index)
-        {
+        private async Task DownloadPatchAsync(PatchDownload download, int index) {
             var outFile = GetPatchFile(download.Patch);
 
             Log.Information("Downloading patch {0} at {1} to {2}", download.Patch.VersionId, download.Patch.Url, outFile.FullName);
 
             Actives[index] = download;
 
-            if (outFile.Exists && IsHashCheckPass(download.Patch, outFile))
-            {
+            if (outFile.Exists && IsHashCheckPass(download.Patch, outFile)) {
                 download.State = PatchState.Downloaded;
                 Slots[index] = true;
                 Progresses[index] = download.Patch.Length;
@@ -147,32 +140,27 @@ namespace XIVLauncher.Game.Patch
             }
 
             var dlService = new DownloadService(_downloadOpt);
-            dlService.DownloadProgressChanged += (sender, args) =>
-            {
+            dlService.DownloadProgressChanged += (sender, args) => {
                 Progresses[index] = args.BytesReceived;
                 Speeds[index] = dlService.DownloadSpeed;
             };
 
-            dlService.DownloadFileCompleted += (sender, args) =>
-            {
-                if (args.Error != null)
-                {
+            dlService.DownloadFileCompleted += (sender, args) => {
+                if (args.Error != null) {
                     Log.Error(args.Error, "Download failed for {0}", download.Patch.VersionId);
                     MessageBox.Show($"Download FAILED for {download.Patch.VersionId}.\nPlease try again.\n\n" + args.Error, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
                     return;
                 }
 
-                if (args.Cancelled)
-                {
+                if (args.Cancelled) {
                     Log.Error("Download cancelled for {0}", download.Patch.VersionId);
                     MessageBox.Show($"Download CANCELLED for {download.Patch.VersionId}.\nPlease try again.\n\n" + args.Error, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
                 }
 
                 // Let's just bail for now, need better handling of this later
-                if (!IsHashCheckPass(download.Patch, outFile))
-                {
+                if (!IsHashCheckPass(download.Patch, outFile)) {
                     Log.Error("HashCHeck failed for {0} after DL", download.Patch.VersionId);
                     MessageBox.Show($"IsHashCheckPass FAILED for {download.Patch.VersionId}.\nPlease try again.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     outFile.Delete();
@@ -191,33 +179,27 @@ namespace XIVLauncher.Game.Patch
             await dlService.DownloadFileAsync(download.Patch.Url, outFile.FullName);
         }
 
-        private void RunDownloadQueue()
-        {
-            while (Downloads.Any(x => x.State == PatchState.Nothing))
-            {
+        private void RunDownloadQueue() {
+            while (Downloads.Any(x => x.State == PatchState.Nothing)) {
                 Thread.Sleep(500);
-                for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
-                {
-                    if (!Slots[i]) 
+                for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++) {
+                    if (!Slots[i])
                         continue;
 
                     Slots[i] = false;
 
                     var toDl = Downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
 
-                    if (toDl == null)
-                    {
+                    if (toDl == null) {
                         Log.Information("All patches downloaded.");
 
                         DownloadsDone = true;
 
-                        for (var j = 0; j < Progresses.Length; j++)
-                        {
+                        for (var j = 0; j < Progresses.Length; j++) {
                             Progresses[j] = 0;
                         }
 
-                        for (var j = 0; j < Speeds.Length; j++)
-                        {
+                        for (var j = 0; j < Speeds.Length; j++) {
                             Speeds[j] = 0;
                         }
 
@@ -231,10 +213,8 @@ namespace XIVLauncher.Game.Patch
             }
         }
 
-        private void RunApplyQueue()
-        {
-            while (CurrentInstallIndex < Downloads.Count)
-            {
+        private void RunApplyQueue() {
+            while (CurrentInstallIndex < Downloads.Count) {
                 Thread.Sleep(500);
 
                 var toInstall = Downloads[CurrentInstallIndex];
@@ -252,8 +232,7 @@ namespace XIVLauncher.Game.Patch
 
                 _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
 
-                while (_installer.State != PatchInstaller.InstallerState.Ready)
-                {
+                while (_installer.State != PatchInstaller.InstallerState.Ready) {
                     Thread.Yield();
                 }
 
@@ -271,25 +250,21 @@ namespace XIVLauncher.Game.Patch
             OnFinish?.Invoke(this, true);
         }
 
-        private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
-        {
-            if (patchListEntry.HashType != "sha1")
-            {
+        private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path) {
+            if (patchListEntry.HashType != "sha1") {
                 Log.Verbose("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
                 return true;
             }
 
             var stream = path.OpenRead();
 
-            var parts = (int) Math.Round((double) patchListEntry.Length / patchListEntry.HashBlockSize);
+            var parts = (int)Math.Round((double)patchListEntry.Length / patchListEntry.HashBlockSize);
             var block = new byte[patchListEntry.HashBlockSize];
 
-            for (var i = 0; i < parts; i++)
-            {
-                var read = stream.Read(block, 0, (int) patchListEntry.HashBlockSize);
+            for (var i = 0; i < parts; i++) {
+                var read = stream.Read(block, 0, (int)patchListEntry.HashBlockSize);
 
-                if (read < patchListEntry.HashBlockSize)
-                {
+                if (read < patchListEntry.HashBlockSize) {
                     var trimmedBlock = new byte[read];
                     Array.Copy(block, 0, trimmedBlock, 0, read);
                     block = trimmedBlock;
@@ -298,10 +273,9 @@ namespace XIVLauncher.Game.Patch
                 using var sha1 = new SHA1Managed();
 
                 var hash = sha1.ComputeHash(block);
-                var sb = new StringBuilder(hash.Length * 2); 
+                var sb = new StringBuilder(hash.Length * 2);
 
-                foreach (var b in hash)
-                {
+                foreach (var b in hash) {
                     sb.Append(b.ToString("x2"));
                 }
 
@@ -316,16 +290,14 @@ namespace XIVLauncher.Game.Patch
             return true;
         }
 
-        private FileInfo GetPatchFile(PatchListEntry patch)
-        {
-            var file = new FileInfo(Path.Combine(_patchStore.FullName, patch.Url.Substring("http://patch-dl.ffxiv.com/".Length)));
+        private FileInfo GetPatchFile(PatchListEntry patch) {
+            var file = new FileInfo(Path.Combine(_patchStore.FullName, patch.Url.Substring("http://ff.autopatch.sdo.com/ff/game/".Length)));
             file.Directory.Create();
 
             return file;
         }
 
-        private Repository GetRepoForPatch(PatchListEntry patch)
-        {
+        private Repository GetRepoForPatch(PatchListEntry patch) {
             if (patch.Url.Contains("boot"))
                 return Repository.Boot;
 

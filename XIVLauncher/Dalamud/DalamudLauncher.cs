@@ -28,16 +28,14 @@ namespace XIVLauncher.Dalamud
         private ClientLanguage _language;
         private bool _optOutMbCollection;
 
-        public DalamudLauncher(DalamudLoadingOverlay overlay)
-        {
+        public DalamudLauncher(DalamudLoadingOverlay overlay) {
             _overlay = overlay;
         }
 
-        public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
-        {
+        public void Setup(Process gameProcess, ILauncherSettingsV3 setting) {
             _gameProcess = gameProcess;
             _gamePath = setting.GamePath;
-            _language = setting.Language.GetValueOrDefault(ClientLanguage.English);
+            _language = ClientLanguage.ChineseSimplified;
             _optOutMbCollection = setting.OptOutMbCollection.GetValueOrDefault(); ;
         }
 
@@ -45,27 +43,23 @@ namespace XIVLauncher.Dalamud
 
         private readonly string _dalamudMutexName = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
 
-        public void DoWork(object state)
-        {
-            var cancellationToken = (CancellationToken) state;
+        public void DoWork(object state) {
+            var cancellationToken = (CancellationToken)state;
 
             var mutex = new Mutex(false, this._dalamudMutexName);
-            try
-            {
+            try {
                 var isMine = mutex.WaitOne(0, false);
 
                 Run(_gamePath, _language, _gameProcess, isMine);
 
-                while (!cancellationToken.IsCancellationRequested)
-                {
+                while (!cancellationToken.IsCancellationRequested) {
                     Thread.Sleep(1);
                 }
 
                 if (isMine)
                     mutex.ReleaseMutex();
             }
-            finally
-            {
+            finally {
                 mutex.Close();
 
                 Log.Information("Dalamud mutex closed.");
@@ -78,8 +72,7 @@ namespace XIVLauncher.Dalamud
             public string SupportedGameVer { get; set; }
         }
 
-        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
-        {
+        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads) {
             Log.Information("DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language, doDownloads);
 
             if (!CheckVcRedist())
@@ -96,8 +89,8 @@ namespace XIVLauncher.Dalamud
 
             var doDalamudTest = DalamudSettings.GetSettings().DoDalamudTest;
 
-            Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
-
+            Thread.Sleep((int)App.Settings.DalamudInjectionDelayMs);
+            /*
             using var client = new WebClient();
 
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
@@ -108,15 +101,12 @@ namespace XIVLauncher.Dalamud
             var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-            if (doDownloads)
-            {
-                if (!File.Exists(addonExe))
-                {
+            if (doDownloads) {
+                if (!File.Exists(addonExe)) {
                     Serilog.Log.Information("[HOOKS] Not found, redownloading");
                     Download(addonDirectory, doDalamudTest);
                 }
-                else
-                {
+                else {
                     var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
                     var version = versionInfo.ProductVersion;
 
@@ -126,15 +116,14 @@ namespace XIVLauncher.Dalamud
                     if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
                         Download(addonDirectory, doDalamudTest);
                 }
-            }
+            }*/
 
             //if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
             //    return;
 
             if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
                 !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")) ||
-                !File.Exists(Path.Combine(addonDirectory, "Dalamud.Injector.exe")))
-            {
+                !File.Exists(Path.Combine(addonDirectory, "Dalamud.Injector.exe"))) {
                 MessageBox.Show(
                     "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -145,47 +134,41 @@ namespace XIVLauncher.Dalamud
 
             var assetPath = Path.Combine(Paths.RoamingPath, "DalamudAssets");
 
-            try
-            {
+            try {
                 //TODO: Make async again, make UI-capable
-                if (!AssetManager.EnsureAssets(assetPath, _overlay))
-                {
+                if (!AssetManager.EnsureAssets(assetPath, _overlay)) {
                     Log.Information("Assets not ensured, bailing out...");
                     return;
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.Error(ex, "Asset ensurement error, bailing out...");
                 return;
             }
-            
-            var startInfo = new DalamudStartInfo
-            {
+
+            var startInfo = new DalamudStartInfo {
                 Language = language,
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = DalamudSettings.configPath,
-                AssetDirectory = assetPath,
-                GameVersion = remoteVersionInfo.SupportedGameVer,
-                OptOutMbCollection = _optOutMbCollection
+                WorkingDirectory = assetPath,
+                GameVersion = Repository.Ffxiv.GetVer(gamePath),
+                //OptOutMbCollection = _optOutMbCollection
             };
 
             var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
 
-            var process = new Process
-            {
+            var process = new Process {
                 StartInfo =
                 {
-                    FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
-                    Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory
+                    FileName = addonExe, WindowStyle = ProcessWindowStyle.Normal, CreateNoWindow = false,
+                    Arguments = gameProcess.Id.ToString() + " " + parameters,WorkingDirectory = addonDirectory
                 }
             };
 
             process.Start();
 
-            _overlay.Dispatcher.Invoke(() =>
-            {
+            _overlay.Dispatcher.Invoke(() => {
                 _overlay.Hide();
                 _overlay.Close();
             });
@@ -196,8 +179,7 @@ namespace XIVLauncher.Dalamud
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
         }
 
-        public static bool CanRunDalamud(DirectoryInfo gamePath)
-        {
+        public static bool CanRunDalamud(DirectoryInfo gamePath) {
             return true;
             using var client = new WebClient();
 
@@ -211,8 +193,7 @@ namespace XIVLauncher.Dalamud
             return true;
         }
 
-        private void Download(string addonPath, bool staging)
-        {
+        private void Download(string addonPath, bool staging) {
             Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
 
             _overlay.Dispatcher.Invoke(() => _overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud));
@@ -222,18 +203,15 @@ namespace XIVLauncher.Dalamud
 
             var hooksDirectory = new DirectoryInfo(addonPath);
 
-            foreach (var file in hooksDirectory.GetFiles())
-            {
-                file.Delete(); 
+            foreach (var file in hooksDirectory.GetFiles()) {
+                file.Delete();
             }
 
-            foreach (var dir in hooksDirectory.GetDirectories())
-            {
-                dir.Delete(true); 
+            foreach (var dir in hooksDirectory.GetDirectories()) {
+                dir.Delete(true);
             }
 
-            using (var client = new WebClient())
-            {
+            using (var client = new WebClient()) {
                 var downloadPath = Path.GetTempFileName();
 
                 if (File.Exists(downloadPath))
@@ -248,15 +226,12 @@ namespace XIVLauncher.Dalamud
             Thread.Sleep(1000);
         }
 
-        private static bool CheckVcRedist()
-        {
+        private static bool CheckVcRedist() {
             if (CheckDotNet48() && CheckVc2019() &&
-                File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll")))
-            {
+                File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll"))) {
                 return true;
             }
-            else if (!CheckDotNet48() && CheckVc2019())
-            {
+            else if (!CheckDotNet48() && CheckVc2019()) {
                 var res = MessageBox.Show(
                 Loc.Localize("DalamudDotNet48RedistError",
                     "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage."),
@@ -264,8 +239,7 @@ namespace XIVLauncher.Dalamud
 
                 return false;
             }
-            else if (CheckDotNet48() && !CheckVc2019())
-            {
+            else if (CheckDotNet48() && !CheckVc2019()) {
                 var res = MessageBox.Show(
                 Loc.Localize("DalamudVc2019RedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
@@ -273,8 +247,7 @@ namespace XIVLauncher.Dalamud
 
                 return false;
             }
-            else
-            {
+            else {
                 var res = MessageBox.Show(
                 Loc.Localize("DalamudVcRedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
@@ -284,32 +257,27 @@ namespace XIVLauncher.Dalamud
             }
         }
 
-        private static bool CheckDotNet48()
-        {
+        private static bool CheckDotNet48() {
             Serilog.Log.Information("Checking for .Net 4.8 or later...");
 
             // copied and adjusted from https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
 
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
 
-            using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
-            {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null && (int)ndpKey.GetValue("Release") >= 528040)
-                {
+            using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey)) {
+                if (ndpKey != null && ndpKey.GetValue("Release") != null && (int)ndpKey.GetValue("Release") >= 528040) {
                     return true;
                 }
-                else
-                {
+                else {
                     Serilog.Log.Error(".Net 4.8 or later not found");
                     return false;
                 }
             }
 
-            
+
         }
 
-        private static bool CheckVc2019()
-        {
+        private static bool CheckVc2019() {
             Serilog.Log.Information("Checking for VS 2015-2019 Redist...");
 
             // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
@@ -318,8 +286,7 @@ namespace XIVLauncher.Dalamud
             var vcreg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum", false);
             if (vcreg == null) return false;
             var vcVersion = vcreg.GetValue("Version");
-            if (((string)vcVersion).StartsWith("14"))
-            {
+            if (((string)vcVersion).StartsWith("14")) {
                 return true;
             }
 

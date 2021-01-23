@@ -39,9 +39,8 @@ namespace XIVLauncher
 
         private MainWindow _mainWindow;
 
-        public App()
-        {
-            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+        public App() {
+            RenderOptions.ProcessRenderMode = RenderMode.Default;
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
@@ -72,40 +71,35 @@ namespace XIVLauncher
             TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
 
-            try
-            {
+            try {
                 SetupSettings();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Log.Error(e, "Settings were corrupted, resetting");
                 File.Delete(GetConfigPath("launcher"));
                 SetupSettings();
             }
 
 #if !XL_LOC_FORCEFALLBACKS
-            try
-            {
-                if (App.Settings.LauncherLanguage == null)
-                {
+            try {
+                if (App.Settings.LauncherLanguage != null) {
                     var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
                     App.Settings.LauncherLanguage = App.Settings.LauncherLanguage.GetLangFromTwoLetterISO(currentUiLang);
                 }
 
                 Log.Information("Trying to set up Loc for language code {0}", App.Settings.LauncherLanguage.GetLocalizationCode());
-                if (!App.Settings.LauncherLanguage.IsDefault())
-                {
-                    Loc.Setup(Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{App.Settings.LauncherLanguage.GetLocalizationCode()}.json"));
-                }
-                else
-                {
-                    Loc.SetupWithFallbacks();
-                }
+                Loc.Setup(Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{App.Settings.LauncherLanguage.GetLocalizationCode()}.json"));
+                //if (!App.Settings.LauncherLanguage.IsDefault()) {
+
+                //}
+                //else {
+                //    Loc.SetupWithFallbacks();
+                //}
             }
-            catch(Exception ex){
+            catch (Exception ex) {
                 Log.Error(ex, "Could not get language information. Setting up fallbacks.");
                 Loc.Setup("{}");
-            }  
+            }
 #else
             // Force all fallbacks
             Loc.Setup("{}");
@@ -141,8 +135,7 @@ namespace XIVLauncher
 #endif
         }
 
-        private void SetupSettings()
-        {
+        private void SetupSettings() {
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
                 .UseCommandLineArgs()
                 .UseJsonFile(GetConfigPath("launcher"))
@@ -151,10 +144,8 @@ namespace XIVLauncher
                 .Build();
         }
 
-        private void OnUpdateCheckFinished(object sender, EventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
+        private void OnUpdateCheckFinished(object sender, EventArgs e) {
+            Dispatcher.Invoke(() => {
                 _useFullExceptionHandler = true;
 
 #if !XL_NOAUTOUPDATE
@@ -169,20 +160,17 @@ namespace XIVLauncher
 
         private bool _useFullExceptionHandler = false;
 
-        private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
+        private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) {
             if (!e.Observed)
                 EarlyInitExceptionHandler(sender, new UnhandledExceptionEventArgs(e.Exception, true));
         }
 
-        private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                Log.Error((Exception) e.ExceptionObject, "Unhandled exception.");
+        private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e) {
+            this.Dispatcher.Invoke(() => {
+                Log.Error((Exception)e.ExceptionObject, "Unhandled exception.");
 
                 if (_useFullExceptionHandler)
-                    new ErrorWindow((Exception) e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
+                    new ErrorWindow((Exception)e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
                         .ShowDialog();
                 else
                     MessageBox.Show(
@@ -194,25 +182,20 @@ namespace XIVLauncher
             });
         }
 
-        private static string GetConfigPath(string prefix) => Path.Combine(Environment.CurrentDirectory,"AppData", $"{prefix}ConfigV3.json");
+        private static string GetConfigPath(string prefix) => Path.Combine(Environment.CurrentDirectory, "AppData", $"{prefix}ConfigV3.json");
 
-        private void App_OnStartup(object sender, StartupEventArgs e)
-        {
+        private void App_OnStartup(object sender, StartupEventArgs e) {
             var accountName = string.Empty;
 
-            if (e.Args.Length > 0)
-            {
-                foreach (string arg in e.Args)
-                {
-                    if (arg == "--genLocalizable")
-                    {
+            if (e.Args.Length > 0) {
+                foreach (string arg in e.Args) {
+                    if (arg == "--genLocalizable") {
                         Loc.ExportLocalizable();
                         Environment.Exit(0);
                         return;
                     }
 
-                    if (arg == "--genIntegrity")
-                    {
+                    if (arg == "--genIntegrity") {
                         var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
                         File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
 
@@ -222,15 +205,13 @@ namespace XIVLauncher
                     }
 
                     // Check if the accountName parameter is provided, if yes, pass it to MainWindow
-                    if (arg.StartsWith("--account="))
-                    {
+                    if (arg.StartsWith("--account=")) {
                         accountName = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
                         App.Settings.CurrentAccountId = accountName;
                     }
 
                     // Override client launch language by parameter
-                    if (arg.StartsWith("--clientlang="))
-                    {
+                    if (arg.StartsWith("--clientlang=")) {
                         string langarg = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
                         Enum.TryParse(langarg, out ClientLanguage lang); // defaults to Japanese if the input was invalid.
                         App.Settings.Language = lang;
@@ -238,11 +219,10 @@ namespace XIVLauncher
                     }
                 }
             }
-            
+
             Log.Information("Loading MainWindow for account '{0}'", accountName);
 
-            if (EnvironmentSettings.IsDisableUpdates)
-            {
+            if (EnvironmentSettings.IsDisableUpdates) {
                 OnUpdateCheckFinished(null, null);
             }
 
